@@ -46,6 +46,15 @@ public class User extends BaseEntity {
     private String email;
 
     /**
+     * Legacy database compatibility field.
+     * The current RegisterRequest/UserResponse DTOs do not expose phone, but
+     * existing local schemas may still have users.phone as NOT NULL.
+     */
+    @Builder.Default
+    @Column(nullable = false, length = 30)
+    private String phone = "";
+
+    /**
      * BCrypt-encoded password hash.
      * We NEVER store plain text passwords.
      * The encoder (in AuthService, Phase 4) produces ~60+ char strings.
@@ -66,5 +75,19 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
+
+    /**
+     * Approval status for tenant accounts.
+     *
+     * Tenants start as PENDING and require maintenance staff approval.
+     * Maintenance staff accounts are always set to APPROVED.
+     *
+     * columnDefinition DEFAULT 'APPROVED' ensures existing DB rows
+     * get APPROVED automatically when the column is added.
+     */
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) NOT NULL DEFAULT 'APPROVED'")
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
 }

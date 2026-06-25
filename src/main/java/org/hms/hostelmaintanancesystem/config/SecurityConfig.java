@@ -3,6 +3,7 @@ package org.hms.hostelmaintanancesystem.config;
 import org.hms.hostelmaintanancesystem.security.CustomUserDetailsService;
 import org.hms.hostelmaintanancesystem.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -124,6 +125,9 @@ public class SecurityConfig {
                 // Disable CSRF — REST APIs using JWT tokens are not vulnerable
                 .csrf(AbstractHttpConfigurer::disable)
 
+                // Use CorsConfig so browser preflight requests from Vite are handled before auth.
+                .cors(Customizer.withDefaults())
+
                 // Authorization rules (evaluated top-to-bottom, first match wins)
                 .authorizeHttpRequests(auth -> auth
                         // ── Public endpoints ──
@@ -140,6 +144,7 @@ public class SecurityConfig {
                         // ── MAINTENANCE-only endpoints ──
                         .requestMatchers(HttpMethod.GET, "/api/requests").hasRole("MAINTENANCE")
                         .requestMatchers(HttpMethod.PUT, "/api/requests/*/status").hasRole("MAINTENANCE")
+                        .requestMatchers("/api/admin/**").hasRole("MAINTENANCE")
 
                         // ── Everything else: just needs a valid JWT ──
                         .anyRequest().authenticated()
