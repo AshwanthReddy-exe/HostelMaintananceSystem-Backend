@@ -24,7 +24,11 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Apply to all API endpoints
                         // Allow local dev (Vite default) and potential prod frontend URLs
-                        .allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+                        .allowedOrigins(
+                                "http://localhost:5173", "http://127.0.0.1:5173",
+                                "http://localhost", "http://127.0.0.1",
+                                "http://localhost:80", "http://127.0.0.1:80"
+                        )
                         // Allow the standard HTTP methods we use
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         // Allow standard headers plus Authorization (for JWT)

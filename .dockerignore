@@ -1,0 +1,10 @@
+target/
+.git/
+.idea/
+.mvn/
+*.md
+Dockerfile
+docker-compose.yml
+.gitignore
+.gitattributes
+.kimchi/
